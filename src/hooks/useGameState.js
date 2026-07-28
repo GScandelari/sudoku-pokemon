@@ -14,7 +14,9 @@ import {
 // instanciado aqui, para que o estado de mudo não fique dessincronizado entre
 // a tela de dificuldade e a partida em andamento.
 // `savedGame`, quando fornecido, retoma uma partida salva (opção "Continuar").
-export function useGameState(difficulty, sound, savedGame) {
+// `player` é o usuário autenticado atual ({ uid, displayName }), usado para
+// gravar a pontuação no placar público ao vencer.
+export function useGameState(difficulty, sound, savedGame, player) {
   const sudoku = useSudokuBoard(difficulty, savedGame)
   const highScores = useHighScores(difficulty)
 
@@ -62,13 +64,14 @@ export function useGameState(difficulty, sound, savedGame) {
     })
   }, [sudoku.isReady, status, difficulty, sudoku.puzzle, sudoku.solution, sudoku.board, sudoku.wrongMask, score, multiplier, lives, elapsedSeconds])
 
-  // Dispara o som, grava o recorde e limpa a partida salva na transição de
-  // status (dependência limitada a `status` de propósito, para não repetir).
+  // Dispara o som, grava o placar público e limpa a partida salva na
+  // transição de status (dependência limitada a `status` de propósito, para
+  // não gravar duas vezes). A gravação no Firestore é assíncrona.
   useEffect(() => {
     if (status === 'won') {
       sound.playVictory()
-      setIsNewRecord(highScores.submit(finalScore, elapsedSeconds))
       clearSavedGame()
+      highScores.submit(finalScore, elapsedSeconds, player).then(setIsNewRecord)
     } else if (status === 'lost') {
       sound.playDefeat()
       clearSavedGame()

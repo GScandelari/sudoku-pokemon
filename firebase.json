@@ -1,4 +1,11 @@
 {
+  "firestore": [
+    {
+      "database": "sudoku-pokemon",
+      "rules": "firestore.rules",
+      "indexes": "firestore.indexes.json"
+    }
+  ],
   "hosting": {
     "target": "games",
     "public": "public-deploy",

@@ -14,13 +14,15 @@ import SoundToggle from './components/ui/SoundToggle'
 import CharacterSelect from './components/onboarding/CharacterSelect'
 import OnboardingGuide from './components/onboarding/OnboardingGuide'
 import CharacterPortrait from './components/onboarding/CharacterPortrait'
+import LoginScreen from './components/auth/LoginScreen'
 import { useGameState } from './hooks/useGameState'
 import { useTheme } from './hooks/useTheme'
 import { useSound } from './hooks/useSound'
 import { useOnboarding } from './hooks/useOnboarding'
 import { useBackgroundMusic } from './hooks/useBackgroundMusic'
 import { useGameMusic } from './hooks/useGameMusic'
-import { getHighScores } from './game-logic/highScores'
+import { useAuth } from './hooks/useAuth'
+import { useHighScores } from './hooks/useHighScores'
 import { loadSavedGame, hasSavedGame } from './game-logic/savedGame'
 import { DIFFICULTY } from './game-logic/sudokuGenerator'
 import { NARRATIVE_TEXT } from './content/narrativeText'
@@ -91,13 +93,21 @@ function DifficultyScreen({ onChoose, onBack, characterId, muted, toggleMuted })
   )
 }
 
+// Um componente por dificuldade para poder chamar useHighScores (hook) uma
+// vez por lista, sem violar as regras de hooks dentro de um .map().
+function DifficultyScores({ difficulty, label }) {
+  const { entries, loading } = useHighScores(difficulty)
+  return <HighScoresList title={label} entries={entries} loading={loading} />
+}
+
 function ScoresScreen({ onBack, characterId, muted, toggleMuted }) {
   return (
     <MenuLayout characterId={characterId} muted={muted} toggleMuted={toggleMuted}>
       <h2>Pontuação</h2>
+      <p>Placar público — todos os jogadores aparecem aqui.</p>
       <div className="difficulty-select__scores">
         {Object.values(DIFFICULTY).map((d) => (
-          <HighScoresList key={d} title={DIFFICULTY_LABELS[d]} entries={getHighScores(d)} />
+          <DifficultyScores key={d} difficulty={d} label={DIFFICULTY_LABELS[d]} />
         ))}
       </div>
       <button type="button" className="icon-toggle" onClick={onBack}>
@@ -116,10 +126,15 @@ function SettingsScreen({
   toggleMuted,
   onReplayGuide,
   onChangeCharacter,
+  displayName,
+  isAnonymous,
+  onSignInGoogle,
+  onSignOut,
 }) {
   return (
     <MenuLayout characterId={characterId} muted={muted} toggleMuted={toggleMuted}>
       <h2>Configurações</h2>
+      <p>Jogando como: <strong>{displayName}</strong></p>
       <div className="main-menu__options">
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
         <button type="button" className="character-badge" onClick={onChangeCharacter}>
@@ -129,6 +144,14 @@ function SettingsScreen({
         <button type="button" className="icon-toggle" onClick={onReplayGuide}>
           Como jogar?
         </button>
+        {isAnonymous && (
+          <button type="button" onClick={onSignInGoogle}>
+            Entrar com Google
+          </button>
+        )}
+        <button type="button" className="icon-toggle" onClick={onSignOut}>
+          Sair da conta
+        </button>
       </div>
       <button type="button" className="icon-toggle" onClick={onBack}>
         Voltar
@@ -137,8 +160,8 @@ function SettingsScreen({
   )
 }
 
-function Game({ difficulty, savedGame, onExit, sound, characterId }) {
-  const game = useGameState(difficulty, sound, savedGame)
+function Game({ difficulty, savedGame, onExit, sound, characterId, player }) {
+  const game = useGameState(difficulty, sound, savedGame, player)
   useGameMusic(!sound.muted)
 
   function handleExit() {
@@ -235,6 +258,7 @@ export default function App() {
   const { theme, toggleTheme } = useTheme()
   const sound = useSound()
   const onboarding = useOnboarding()
+  const authState = useAuth()
 
   useBackgroundMusic(!difficulty && !sound.muted)
 
@@ -258,6 +282,28 @@ export default function App() {
     setMenuScreen('main')
     setCanContinue(hasSavedGame())
   }
+
+  // Entrada obrigatória (Google ou convidado) antes de qualquer outra tela —
+  // o placar público precisa de uma identidade para gravar a pontuação.
+  if (authState.authLoading) {
+    return (
+      <div className="game-screen">
+        <p className="loading-message">Carregando...</p>
+      </div>
+    )
+  }
+
+  if (!authState.isSignedIn) {
+    return (
+      <LoginScreen
+        onSignInGoogle={authState.signInGoogle}
+        onSignInGuest={authState.signInGuest}
+        authError={authState.authError}
+      />
+    )
+  }
+
+  const player = { uid: authState.user.uid, displayName: authState.displayName }
 
   // Primeira visita: escolher personagem, depois ver a introdução guiada.
   if (!onboarding.hasSeenOnboarding) {
@@ -307,6 +353,7 @@ export default function App() {
         onExit={exitToMenu}
         sound={sound}
         characterId={onboarding.characterId}
+        player={player}
       />
     )
   }
@@ -345,6 +392,10 @@ export default function App() {
         toggleMuted={sound.toggleMuted}
         onReplayGuide={() => setShowGuideReplay(true)}
         onChangeCharacter={() => setShowCharacterChange(true)}
+        displayName={authState.displayName}
+        isAnonymous={authState.user.isAnonymous}
+        onSignInGoogle={authState.signInGoogle}
+        onSignOut={authState.logOut}
       />
     )
   }

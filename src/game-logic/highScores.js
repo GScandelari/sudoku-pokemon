@@ -1,44 +1,41 @@
-// Placar de recordes local (localStorage): top 5 por dificuldade, apenas vitórias.
-// Ordenado por maior pontuação; em caso de empate exato, o tempo mais rápido vence.
+// Placar público (Firestore, banco "sudoku-pokemon"): top 10 por dificuldade,
+// entre todos os jogadores. Cada vitória vira um registro novo (não é
+// substituído/atualizado) — o placar mostra as melhores pontuações entre
+// todas as tentativas de todos os jogadores, não uma entrada por jogador.
 
-const STORAGE_KEY = 'pokemon-sudoku-highscores-v1'
-const MAX_ENTRIES = 5
+import { addDoc, collection, getDocs, limit, orderBy, query, serverTimestamp, where } from 'firebase/firestore'
+import { db } from '../firebase'
 
-function loadAll() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return raw ? JSON.parse(raw) : {}
-  } catch {
-    return {}
-  }
+const SCORES_COLLECTION = 'scores'
+const TOP_N = 10
+
+export async function getTopScores(difficulty, count = TOP_N) {
+  const q = query(
+    collection(db, SCORES_COLLECTION),
+    where('difficulty', '==', difficulty),
+    orderBy('score', 'desc'),
+    orderBy('elapsedSeconds', 'asc'),
+    limit(count),
+  )
+  const snapshot = await getDocs(q)
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
 }
 
-function saveAll(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-}
+// Grava a pontuação e retorna a lista atualizada do top 10 junto com um
+// sinalizador indicando se essa jogada entrou no ranking.
+export async function submitScore({ uid, playerName, difficulty, score, elapsedSeconds }) {
+  await addDoc(collection(db, SCORES_COLLECTION), {
+    uid,
+    playerName,
+    difficulty,
+    score,
+    elapsedSeconds,
+    createdAt: serverTimestamp(),
+  })
 
-function compareEntries(a, b) {
-  return b.score - a.score || a.elapsedSeconds - b.elapsedSeconds
-}
-
-export function getHighScores(difficulty) {
-  const all = loadAll()
-  return all[difficulty] ?? []
-}
-
-// Insere a pontuação (se estiver entre as top 5) e retorna a lista atualizada
-// junto com um sinalizador indicando se entrou no ranking.
-export function submitHighScore(difficulty, score, elapsedSeconds) {
-  const all = loadAll()
-  const list = all[difficulty] ?? []
-  const entry = { score, elapsedSeconds, date: new Date().toISOString() }
-
-  const updated = [...list, entry].sort(compareEntries).slice(0, MAX_ENTRIES)
-
-  const isNewRecord = updated.includes(entry)
-
-  all[difficulty] = updated
-  saveAll(all)
-
-  return { isNewRecord, entries: updated }
+  const entries = await getTopScores(difficulty)
+  const isNewRecord = entries.some(
+    (e) => e.uid === uid && e.score === score && e.elapsedSeconds === elapsedSeconds,
+  )
+  return { isNewRecord, entries }
 }

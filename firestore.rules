@@ -1,0 +1,25 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Placar público: leitura livre para qualquer um, escrita só para
+    // usuários autenticados (inclusive anônimos) gravando em nome próprio.
+    // Entradas são imutáveis — não há como editar ou apagar depois de criada.
+    match /scores/{scoreId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.difficulty in ['facil', 'medio', 'dificil']
+        && request.resource.data.score is int
+        && request.resource.data.score >= 0
+        && request.resource.data.elapsedSeconds is int
+        && request.resource.data.elapsedSeconds >= 0
+        && request.resource.data.playerName is string
+        && request.resource.data.playerName.size() > 0
+        && request.resource.data.playerName.size() <= 100;
+
+      allow update, delete: if false;
+    }
+  }
+}
