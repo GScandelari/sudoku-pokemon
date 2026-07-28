@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-ssr
+public-deploy
+.firebase
+*.local
+
+.vscode/*
+!.vscode/extensions.json
+.DS_Store

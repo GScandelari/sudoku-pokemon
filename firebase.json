@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "target": "games",
+    "public": "public-deploy",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "/sudoku-pokemon/**",
+        "destination": "/sudoku-pokemon/index.html"
+      }
+    ]
+  }
+}

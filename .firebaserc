@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "website-scandelari"
+  },
+  "targets": {
+    "website-scandelari": {
+      "hosting": {
+        "games": [
+          "gscandelari-games"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>games.gscandelari.com.br</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<style>
+  :root {
+    --bg: #14181c;
+    --panel: #1d2329;
+    --panel-line: #2c343b;
+    --ink: #e9edf0;
+    --muted: #8a97a1;
+    --accent: #5fb0a3;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f2f3f1;
+      --panel: #ffffff;
+      --panel-line: #dcdfdb;
+      --ink: #16211f;
+      --muted: #57635e;
+      --accent: #2f7c6d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14181c; --panel: #1d2329; --panel-line: #2c343b;
+    --ink: #e9edf0; --muted: #8a97a1; --accent: #5fb0a3;
+  }
+  :root[data-theme="light"] {
+    --bg: #f2f3f1; --panel: #ffffff; --panel-line: #dcdfdb;
+    --ink: #16211f; --muted: #57635e; --accent: #2f7c6d;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+  }
+
+  main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 72px 24px 96px;
+  }
+
+  .eyebrow {
+    font-family: "Courier New", ui-monospace, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+
+  h1 {
+    font-size: 1.9rem;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    color: var(--muted);
+    max-width: 52ch;
+    margin: 0 0 48px;
+  }
+
+  .game-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .game-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--panel);
+    border: 1px solid var(--panel-line);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease;
+  }
+
+  .game-card:hover,
+  .game-card:focus-visible {
+    border-color: var(--accent);
+  }
+
+  .game-card__thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    background: var(--bg);
+    border: 1px solid var(--panel-line);
+  }
+
+  .game-card__body h2 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+  }
+
+  .game-card__body p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  footer {
+    max-width: 680px;
+    margin: 64px auto 0;
+    padding: 0 24px;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">games.gscandelari.com.br</p>
+    <h1>Jogos</h1>
+    <p class="lede">Pequenos projetos pessoais, jogáveis direto no navegador.</p>
+
+    <div class="game-list" id="game-list"></div>
+  </main>
+
+  <footer>
+    <a href="https://gscandelari.com.br">← gscandelari.com.br</a>
+  </footer>
+
+  <script>
+    // Cada jogo novo do hub só precisa de uma entrada aqui.
+    const GAMES = [
+      {
+        emoji: '🎮',
+        title: 'Pokémon Pixel Sudoku',
+        description: 'Sudoku 9x9 com os iniciais de Kanto, pontuação por combo e placar local.',
+        href: '/sudoku-pokemon/',
+      },
+    ]
+
+    const list = document.getElementById('game-list')
+    for (const game of GAMES) {
+      const a = document.createElement('a')
+      a.className = 'game-card'
+      a.href = game.href
+      a.innerHTML = `
+        <span class="game-card__thumb">${game.emoji}</span>
+        <span class="game-card__body">
+          <h2>${game.title}</h2>
+          <p>${game.description}</p>
+        </span>
+      `
+      list.appendChild(a)
+    }
+  </script>
+</body>
+</html>

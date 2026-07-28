@@ -1,0 +1,457 @@
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #1e1e2f;
+  --color-fg: #f0f0f0;
+  --color-panel: #2e2e45;
+  --color-panel-alt: #3a3a55;
+  --color-border: #f0f0f0;
+  --color-subgrid-line: #555;
+  --color-accent: #ffcb05;
+  --color-danger: #e3350d;
+  --color-wrong-bg: #5a2a2a;
+  --color-overlay: rgba(0, 0, 0, 0.75);
+  --color-card-shadow: rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='light'] {
+  --color-bg: #f5f5f0;
+  --color-fg: #202030;
+  --color-panel: #ffffff;
+  --color-panel-alt: #e8e8f0;
+  --color-border: #202030;
+  --color-subgrid-line: #999;
+  --color-accent: #b8860b;
+  --color-danger: #c1272d;
+  --color-wrong-bg: #f8d0d0;
+  --color-overlay: rgba(255, 255, 255, 0.85);
+  --color-card-shadow: rgba(0, 0, 0, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.icon-toggle {
+  padding: 6px 10px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+/* Difficulty select */
+
+.difficulty-select-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  min-height: 100vh;
+  padding: 24px;
+  flex-wrap: wrap;
+}
+
+.difficulty-select-layout__character {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.difficulty-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.screen-top-bar {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
+.difficulty-select__options {
+  display: flex;
+  gap: 12px;
+}
+
+.difficulty-select__options button {
+  padding: 12px 20px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.main-menu__options {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  min-width: 220px;
+}
+
+.main-menu__options button {
+  padding: 12px 20px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.difficulty-select__scores {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.character-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px 6px 6px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+/* Onboarding: seleção de personagem */
+
+.character-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.character-select__options {
+  display: flex;
+  gap: 24px;
+}
+
+.character-select__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+/* Onboarding: guia dialogado */
+
+.onboarding-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: 24px;
+  padding: 24px;
+}
+
+.onboarding-guide__dialogue {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 480px;
+}
+
+.onboarding-guide__bubble {
+  background: var(--color-panel);
+  border: 3px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px;
+  color: var(--color-fg);
+}
+
+.onboarding-guide__bubble p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.onboarding-guide__controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.onboarding-guide__progress {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+.onboarding-guide__controls > button:not(.icon-toggle) {
+  padding: 10px 20px;
+  border: 2px solid var(--color-border);
+  background: var(--color-panel);
+  color: var(--color-fg);
+  border-radius: 6px;
+}
+
+/* High scores */
+
+.high-scores {
+  min-width: 140px;
+  text-align: left;
+}
+
+.high-scores__title {
+  margin: 0 0 6px;
+  font-size: 0.95rem;
+  color: var(--color-accent);
+}
+
+.high-scores__empty {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.high-scores__list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.85rem;
+}
+
+.high-scores__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.high-scores__time,
+.high-scores__date {
+  opacity: 0.6;
+}
+
+/* Game screen */
+
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  position: relative;
+}
+
+.loading-message {
+  margin-top: 64px;
+  font-size: 1.1rem;
+  color: var(--color-accent);
+}
+
+.game-screen__hud {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: 1.1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-screen__controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* Sudoku grid */
+
+.sudoku-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  grid-template-rows: repeat(3, auto);
+  gap: 3px;
+  background: var(--color-border);
+  border: 3px solid var(--color-border);
+}
+
+.sudoku-subgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 48px);
+  grid-template-rows: repeat(3, 48px);
+  gap: 1px;
+  background: var(--color-subgrid-line);
+}
+
+.sudoku-cell {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-panel);
+  border: none;
+  padding: 0;
+}
+
+.sudoku-cell:disabled {
+  cursor: default;
+}
+
+.sudoku-cell--given {
+  background: var(--color-panel-alt);
+}
+
+.sudoku-cell--selected {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.sudoku-cell--wrong {
+  background: var(--color-wrong-bg);
+}
+
+/* Pokémon picker */
+
+.pokemon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 420px;
+}
+
+.pokemon-picker__option {
+  border: 2px solid transparent;
+  background: var(--color-panel);
+  border-radius: 6px;
+  padding: 4px;
+}
+
+.pokemon-picker__option:disabled,
+.pokemon-picker__clear:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pokemon-picker__option--completed {
+  opacity: 1;
+}
+
+.pokemon-picker__option--completed .pokemon-sprite {
+  filter: blur(2px) grayscale(60%);
+}
+
+.pokemon-picker__clear {
+  border: 2px solid var(--color-border);
+  background: var(--color-panel-alt);
+  color: var(--color-fg);
+  border-radius: 6px;
+  padding: 4px 12px;
+}
+
+/* HUD widgets */
+
+.score-board {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.score-board__multiplier {
+  color: var(--color-accent);
+  font-weight: bold;
+}
+
+.lives-indicator {
+  display: flex;
+  gap: 6px;
+}
+
+.lives-indicator__pip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+}
+
+.lives-indicator__pip--full {
+  background: var(--color-danger);
+}
+
+.lives-indicator__pip--empty {
+  background: transparent;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+}
+
+/* End screens (vitória, derrota, pausa) */
+
+.end-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-overlay);
+  z-index: 10;
+}
+
+.end-screen__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 360px;
+  padding: 24px;
+  text-align: center;
+  background: var(--color-panel);
+  border: 3px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px var(--color-card-shadow);
+  color: var(--color-fg);
+}
+
+.end-screen button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-fg);
+  border-radius: 6px;
+}
+
+.end-screen__final-score {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.end-screen__new-record {
+  color: var(--color-accent);
+  font-weight: bold;
+}
