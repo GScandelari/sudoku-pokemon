@@ -15,7 +15,7 @@ export default function Cell({ row, col, value, isGiven, isLocked, isWrong, isSe
       data-row={row}
       data-col={col}
     >
-      {value !== 0 && <PokemonSprite value={value} size={44} />}
+      {value !== 0 && <PokemonSprite value={value} />}
     </button>
   )
 }

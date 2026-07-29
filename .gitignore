@@ -3,6 +3,7 @@ dist
 dist-ssr
 public-deploy
 .firebase
+.claude
 *.local
 
 .vscode/*
